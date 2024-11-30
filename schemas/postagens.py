@@ -23,3 +23,4 @@ class PostagemOut(PostagemBase):
 
 class UpdateStatusRequest(BaseModel):
     status: StatusEnum
+    mensagem: str
