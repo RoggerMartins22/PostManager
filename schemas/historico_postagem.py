@@ -1,12 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
-from enum import Enum
-
-class StatusEnum(str, Enum):
-    pendente = "PN"
-    enviada = "EV"
-    entregue = "ET"
-    cancelada = "CN"
+from schemas.postagens import StatusEnum
 
 class HistoricoPostagemBase(BaseModel):
     postagem_id: int
