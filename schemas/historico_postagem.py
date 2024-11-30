@@ -7,6 +7,6 @@ class HistoricoPostagemBase(BaseModel):
     status: StatusEnum
     mensagem: str
     data_criacao: datetime
-
+    
     class Config:
         orm_mode = True
