@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from datetime import datetime, timedelta
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
 from models.usuario import Base
 
 class HistoricoPostagem(Base):
@@ -10,7 +10,7 @@ class HistoricoPostagem(Base):
     postagem_id = Column(Integer, ForeignKey("postagens.id"), nullable=False)
     status = Column(String, nullable=False)
     mensagem = Column(String, nullable=False)
-    data_criacao = Column(DateTime, default=func.now())
+    data_criacao = Column(DateTime, default=lambda: datetime.now() - timedelta(hours=3))
 
     postagem = relationship("Postagem", back_populates="historico")
 
