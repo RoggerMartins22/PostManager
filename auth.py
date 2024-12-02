@@ -7,9 +7,13 @@ from repository.user import UserRepository
 from fastapi import HTTPException, status, Depends
 import os
 from database import get_db
+from dotenv import load_dotenv
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="usuario/login")
 
-SECRET_KEY = "wnR3SQikuUfv692q-YOd11jsJ-56pSeLx5JtS6UrGPV8eyXQuW4XiOMEl138JnDbCx0"
+
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
