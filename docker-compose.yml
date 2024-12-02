@@ -7,8 +7,13 @@ services:
       - "8000:8000"
     environment:
       - DATABASE_URL=postgresql://root:22082003@db:5432/postagens
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     depends_on:
       - db
+      - redis
+    networks:
+      - app-network
 
   db:
     image: postgres:13
@@ -21,6 +26,20 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  redis:
+    image: redis:7
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
 
 volumes:
   postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
