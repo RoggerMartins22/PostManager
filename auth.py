@@ -5,15 +5,13 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from repository.usuario import get_user_by_email
 from fastapi import HTTPException, status, Depends
-from dotenv import load_dotenv
 import os
 from database import get_db
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="usuario/login")
-load_dotenv() 
 
 SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ALGORITHM = os.getenv("ALGORITHM")
+ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
