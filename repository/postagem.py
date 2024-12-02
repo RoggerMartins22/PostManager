@@ -4,67 +4,47 @@ from models.postagem import Postagem
 from models.historico_postagem import HistoricoPostagem
 from schemas.postagens import PostagemCreate, StatusEnum
 
-def create_postagem(db: Session, postagem: PostagemCreate):
-    db_postagem_existente = db.query(Postagem).filter(Postagem.titulo == postagem.titulo).first()
+def get_postagem_by_titulo(db: Session, titulo: str):
+    return db.query(Postagem).filter(Postagem.titulo == titulo).first()
 
-    if db_postagem_existente:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Já existe uma postagem com esse título"
-        )
-    
+
+def create_postagem_db(db: Session, postagem: PostagemCreate):
     db_postagem = Postagem(**postagem.dict())
-
-    try:
-        db.add(db_postagem)
-        db.commit()
-        db.refresh(db_postagem)
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Erro ao criar postagem: {str(e)}"
-        )
-    
-    db_historico = HistoricoPostagem(
-        postagem_id=db_postagem.id,
-        status=db_postagem.status,
-        mensagem="Postagem Solicitada"
-    )
-
-    try:
-        db.add(db_historico)
-        db.commit()
-        db.refresh(db_historico)
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Erro ao criar histórico de postagem: {str(e)}"
-        )
-
+    db.add(db_postagem)
+    db.commit()
+    db.refresh(db_postagem)
     return db_postagem
 
-def get_postagem(db: Session, postagem_id: int):
-    postagem = db.query(Postagem).filter(Postagem.id == postagem_id).first()
-    
-    if not postagem:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Postagem não encontrada"
-        )
-    return postagem
 
-def get_postagens(db: Session, skip: int = 0, limit: int = 10):
-    postagens = db.query(Postagem).offset(skip).limit(limit).all()
+def create_historico_postagem(db: Session, postagem_id: int, status: str, mensagem: str = "Postagem Solicitada"):
+    db_historico = HistoricoPostagem(
+        postagem_id=postagem_id,
+        status=status,
+        mensagem="Postagem Solicitada"
+    )
+    db.add(db_historico)
+    db.commit()
+    db.refresh(db_historico)
+    return db_historico
+
+
+def get_postagem_by_id(db: Session, postagem_id: int):
+    return db.query(Postagem).filter(Postagem.id == postagem_id).first()
+
+
+def get_all_postagens(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(Postagem).offset(skip).limit(limit).all()
+
+def update_postagem_status(db: Session, postagem_id: int, statusPostagem: StatusEnum):
+    db_postagem = get_postagem_by_id(db, postagem_id)
     
-    if not postagens:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Nenhuma postagem encontrada"
-        )
+    if not db_postagem:
+        return None
     
-    return postagens
+    db_postagem.status = statusPostagem
+    db.commit()
+    db.refresh(db_postagem)
+    return db_postagem
 
 
 def update_status_postagem(db: Session, postagem_id: int, statusPostagem: StatusEnum, mensagem: str):

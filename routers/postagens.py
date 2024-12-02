@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from repository.postagem import create_postagem, get_postagem, get_postagens, update_status_postagem
+from services.postagem import create_postagem, get_postagem, get_postagens, update_status_postagem
 from schemas.postagens import PostagemCreate, PostagemOut, UpdateStatusRequest
 from auth import get_current_user
 from models.usuario import Usuario
@@ -20,7 +20,7 @@ async def consultar_postagem(id: int, db: Session = Depends(get_db), current_use
     return get_postagem(db=db, postagem_id=id)
 
 @router.get("/", response_model=list[PostagemOut])
-async def listar_postagens(skip: int = 0, limit: int = 10, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
+async def listar_postagens(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     return get_postagens(db=db, skip=skip, limit=limit)
 
 @router.patch("/atualizarStatus/{id}")

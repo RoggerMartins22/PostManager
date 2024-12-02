@@ -5,9 +5,13 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from repository.usuario import get_user_by_email
 from fastapi import HTTPException, status, Depends
+from dotenv import load_dotenv
+import os
 from database import get_db
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="usuario/login")
+load_dotenv() 
 
-SECRET_KEY = "wnR3SQikuUfv692q-YOd11jsJ-56pSeLx5JtS6UrGPV8eyXQuW4XiOMEl138JnDbCx0"
+SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -32,9 +36,6 @@ def authenticate_user(db: Session, email: str, password: str):
             detail="Credenciais Inválidas",
             headers={"WWW-Authenticate": "Bearer"},
         )
-
-    print(f"Senha fornecida: {password}")
-    print(f"Senha armazenada: {user.senha_hashed}")
     
     if not verify_password(password, user.senha_hashed):
         raise HTTPException(
@@ -44,8 +45,6 @@ def authenticate_user(db: Session, email: str, password: str):
         )
 
     return user
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="usuario/login")
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(

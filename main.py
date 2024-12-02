@@ -1,16 +1,38 @@
 from fastapi import FastAPI
-from routers import postagens
-from routers import historico_postagem
-from routers import usuario
+from fastapi.openapi.utils import get_openapi
+from routers import postagens, historico_postagem, usuario
 
 app = FastAPI()
 
-app.include_router(router=postagens.router)
-app.include_router(router=historico_postagem.router)
-app.include_router(router=usuario.router)
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
 
-@app.get("/")
-async def root():
-    return {"message": "API de Postagens funcionando!"}
+    openapi_schema = get_openapi(
+        title="Gerenciador de Postagem",
+        version="1.0.0",
+        description="Sistema para gerenciar fluxo de postagem de serviços de correios!",
+        routes=app.routes,
+    )
+
+    openapi_schema["components"]["securitySchemes"] = {
+         "BearerAuth":{
+            "type": "apiKey",
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer Token"
+         }
+
+    }
+
+    openapi_schema["security"] = [{"BearerAuth": []}]
+
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+app.openapi = custom_openapi
 
 
+app.include_router(postagens.router)
+app.include_router(historico_postagem.router)
+app.include_router(usuario.router)
