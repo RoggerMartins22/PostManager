@@ -4,8 +4,8 @@ from datetime import datetime, timedelta
 
 Base = declarative_base()
 
-class Usuario(Base):
-    __tablename__ = "usuarios"
+class Users(Base):
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
     nome = Column(String, index=True)

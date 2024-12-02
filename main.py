@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
-from routers import postagens, historico_postagem, usuario
+from routers import post, post_history, user
 
 app = FastAPI()
 
@@ -33,6 +33,6 @@ def custom_openapi():
 app.openapi = custom_openapi
 
 
-app.include_router(postagens.router)
-app.include_router(historico_postagem.router)
-app.include_router(usuario.router)
+app.include_router(post.router)
+app.include_router(post_history.router)
+app.include_router(user.router)

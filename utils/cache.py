@@ -14,8 +14,8 @@ redis_client = redis.Redis(
 class SystemCache:
     def set_cache(key: str, value: str, ex=300):
         try:
-            value_json = json.dumps(value)
-            redis_client.setex(key, ex, value_json)
+            value_serialized = json.dumps(value, default=str)
+            redis_client.setex(key, ex, value_serialized)
         except Exception as e:
             logger.error(f"Erro ao definir o cache: {str(e)}") 
     

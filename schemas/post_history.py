@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 from datetime import datetime
-from schemas.postagens import StatusEnum
+from schemas.post import StatusEnum
 
-class HistoricoPostagemBase(BaseModel):
+class PostHistoryBase(BaseModel):
     postagem_id: int
     status: StatusEnum
     mensagem: str

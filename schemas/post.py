@@ -7,14 +7,14 @@ class StatusEnum(str, Enum):
     entregue = "ET"
     cancelada = "CN"
 
-class PostagemBase(BaseModel):
+class PostBase(BaseModel):
     titulo: str
     descricao: str
 
-class PostagemCreate(PostagemBase):
+class PostCreate(PostBase):
     status: StatusEnum = StatusEnum.pendente
 
-class PostagemOut(PostagemBase):
+class PostOut(PostBase):
     id: int
     status: StatusEnum
 
